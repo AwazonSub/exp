@@ -11,7 +11,7 @@
 	menu.style['padding'] = "20px";
     menu.style['pointer-events'] = "auto";
     menu.style.visibility ="hidden";
-    document.body.appendChild(menu);
+    document.body.insertBefore(menu,document.getElementById("loading"))
 
     menu.innerHTML = '<b>現在のトークン：<b><br><input type="text" value=' + token + ' readonly="readonly" id="token" style="width:80%"> <input type="button" value="コピー" id="copy"><br><br><b>トークン書き換え<b><br><input type="text" id="tokenArea" style="width:80%"></input> <input type="button" value="書き換え" id="rewrite">';
     var r = document.getElementById("rewrite");
@@ -32,15 +32,22 @@
     }
     function checkToken(){
         var t = {};
-        t.t = window.zj["\x67\x65\x74"]("\x73\x74\x61\x72\x76\x65\x5f\x74\x6f\x6b\x65\x6e");
-        t.id = window.zj["\x67\x65\x74"]("\x73\x74\x61\x72\x76\x65\x5f\x74\x6f\x6b\x65\x6e\x5f\x69\x64");
+        var s_t = "\x73\x74\x61\x72\x76\x65\x5f\x74\x6f\x6b\x65\x6e";
+        var s_t_i = "\x73\x74\x61\x72\x76\x65\x5f\x74\x6f\x6b\x65\x6e\x5f\x69\x64";
+        var cookie = document.cookie;
+        var tokens = cookie.slice(cookie.indexOf(s_t)).substring(0, cookie.slice(cookie.indexOf(s_t)).lastIndexOf(";")).split("; ");
+        
+        t.t = tokens[0].replace(s_t+"=","");
+        t.id = tokens[1].replace(s_t_i+"=","");
         return t.t + " " + t.id;
     }
     function setToken(token){
-        var t = token.split(" ");
-        window.zj["\x73\x65\x74"]("\x73\x74\x61\x72\x76\x65\x5f\x74\x6f\x6b\x65\x6e",t[0]);
-        window.zj["\x73\x65\x74"]("\x73\x74\x61\x72\x76\x65\x5f\x74\x6f\x6b\x65\x6e\x5f\x69\x64",t[1]);
-        window.location.href = "https://starve.io/";
+        var data = token.split(" ")
+        var _token = "starve_token=" + data[0];
+        var id = "starve_token_id=" + data[1];
+        document.cookie = _token;
+        document.cookie = id;
+        window.location.reload()
     }
     function rewritef(){
         if(window.confirm("トークンを書き換えてページを再読み込みします。")){
